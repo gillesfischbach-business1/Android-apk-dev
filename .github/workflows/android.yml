@@ -1,0 +1,104 @@
+name: android
+
+on:
+  push:
+    paths:
+      - 'schueberfouer-android/**'
+      - '.github/workflows/android.yml'
+  pull_request:
+    paths:
+      - 'schueberfouer-android/**'
+      - '.github/workflows/android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: schueberfouer-android
+    env:
+      # Job-level so step `if:` can test it (secrets are not readable in step `if:`).
+      HAS_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_B64 != '' }}
+      VERSION_CODE: ${{ github.run_number }}
+      # The game sources live in another repo; CI builds from the committed www/ bundle.
+      GAME_DIR: ${{ github.workspace }}/game-src
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: schueberfouer-android/package-lock.json
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools platforms;android-36 build-tools;35.0.0'
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Sync web bundle (only when the game sources are present)
+        run: |
+          if [ -f "$GAME_DIR/index.html" ]; then
+            node scripts/sync-web.mjs --game "$GAME_DIR"
+          else
+            echo "Game folder not in this checkout: using the committed www/ bundle."
+            node scripts/sync-web.mjs --check
+          fi
+
+      - name: Capacitor sync
+        run: npx cap sync android
+
+      - name: Build debug APK
+        working-directory: schueberfouer-android/android
+        run: ./gradlew --no-daemon assembleDebug
+
+      - name: Decode upload keystore
+        if: env.HAS_KEYSTORE == 'true'
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+        run: echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/upload-keystore.jks"
+
+      - name: Build signed release AAB
+        if: env.HAS_KEYSTORE == 'true'
+        working-directory: schueberfouer-android/android
+        env:
+          KS_FILE: ${{ runner.temp }}/upload-keystore.jks
+          KS_PASS: ${{ secrets.ANDROID_KS_PASS }}
+          KS_ALIAS: ${{ secrets.ANDROID_KS_ALIAS || 'upload' }}
+          KEY_PASS: ${{ secrets.ANDROID_KEY_PASS }}
+        run: ./gradlew --no-daemon bundleRelease
+
+      - name: Remove keystore
+        if: always() && env.HAS_KEYSTORE == 'true'
+        run: rm -f "$RUNNER_TEMP/upload-keystore.jks"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: schueberfouer-debug-apk
+          path: schueberfouer-android/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v7
+        if: env.HAS_KEYSTORE == 'true'
+        with:
+          name: schueberfouer-release-aab
+          path: schueberfouer-android/android/app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error
