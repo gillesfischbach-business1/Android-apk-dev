@@ -11,8 +11,8 @@ Story-Typ: Integration (Packaging) | Evidenz: dieser Bericht + Screenshots in `q
 | 1 | Paket-Metadaten (APK + AAB) | PASS (2 Hinweise) |
 | 2 | Keine .so, zipalign 16 KB, apksigner, jarsigner | PASS |
 | 3 | Web-Bundle offline / Imports | PASS (1 Hinweis) |
-| 4 | Offline-Laufzeittest 844x390 Android-UA | offen |
-| 5 | native-bridge.js mit Capacitor-Mock | offen (Code-Review erfolgt, siehe unten) |
+| 4 | Offline-Laufzeittest 844x390 Android-UA | PASS mit Defekten (D1, D3, D4) |
+| 5 | native-bridge.js mit Capacitor-Mock | PASS mit Defekt (D2) |
 | 6 | CI-Workflow | PASS |
 | 7 | Repo-Hygiene | PASS |
 
@@ -51,11 +51,66 @@ Hinweise (minor):
   - Kein Treffer fuer googleapis/gstatic/jsdelivr/unpkg; Fonts lokal (`fonts.css` -> `./fonts/*.woff2`).
 - Hinweis H4 (minor, Spielinhalt): Cloud-Tab-Text sagt "An dëser Artifact-Versioun blockéiert d'Sécherheetsrichtlinn ..." - in der Android-App sachlich falsch (Text aus der claude.ai-Artifact-Version).
 
-## 4. Offline-Laufzeittest - offen
+## 4. Offline-Laufzeittest - PASS (mit UI-Defekten)
 
-## 5. native-bridge.js - offen (Review)
+Setup: `assets/public` aus `app-debug.apk` entpackt, eigener Node-HTTP-Server auf 127.0.0.1, Playwright 1.63 / Chromium 1243 headless,
+`--use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader`, UA Pixel 7 / Android 14 / Chrome 131, 844x390, hasTouch, isMobile, DPR 1.
+Alle Nicht-localhost-Requests per `context.route` abgebrochen. Skripte: Scratchpad `rt.cjs` (Haupttest + Mock) und `rt2.cjs` (Nachmessung);
+Rohdaten: `qa/runtime-result.json`.
 
-Code-Review: alles hinter `Capacitor.isNativePlatform()`; jeder Plugin-Aufruf in `call()` mit try/catch und `.catch` -> fehlende Plugins werfen nicht. Back: Titel ohne Menue -> `confirm('Spill zoumaachen?')` -> `App.exitApp()`; sonst `ui.onKey({code:'Escape'})` (Modal schliessen / Pausemenue oeffnen / Menue schliessen). Pause -> Pausemenue 'kaart' + `audio.ctx.suspend()`, Resume -> `ctx.resume()`. Laufzeittest mit Mock steht aus.
+- `#loading.gone` nach **23.9 s** (SwiftShader).
+- **Blockierte externe Requests: 0. Page errors: 0. Fehlgeschlagene Requests / HTTP >= 400: 0.** Console: nur 4x SwiftShader-Warnung "GPU stall due to ReadPixels" (Software-GL, kein App-Fehler).
+- Fonts geladen (offline): Bungee 400, Creepster 400, Nunito 400, Oswald 400/500/700.
+- Android-UA: `G.isMobile=true`, `G.quality="mettel"`, `G.settings.preset="mettel"`, `renderScale=0.85`.
+- **Draw calls**: Titel `G.drawCalls=1806` (2.42 M Dreiecke), im Spiel `1893` (2.43 M Dreiecke). -> D4.
+- Screenshots: `qa/01-title.png`, `qa/02-hud-touch.png`, `qa/03-pause-optiounen.png`, `qa/04-native-mock-after-pause.png`.
+
+Titel: Logo `.tl-logo .k` "SCHUEBERFOUER" x 51-511, y 35-72, `scrollWidth 460 == clientWidth 460`, Font Bungee 38.8 px -> **nicht abgeschnitten** (auch visuell). Hinweis: Fusszeile "KLICK WIELEN" ist ein Desktop-Hinweis.
+
+HUD (getBoundingClientRect, px, [links, oben, rechts, unten]):
+
+| Element | Rect |
+|---|---|
+| #clock | 16,14,98,70 |
+| #wallet | 140,18,262,75 |
+| #minimap | 710,14,830,134 |
+| #prompt | 403,268,441,290 (opacity 0) |
+| #mission | nicht sichtbar (kein aktiver Missionstext) |
+| #touch #stick | 26,242,156,372 |
+| #touch E (gross) | 738,290,816,368 |
+| #touch Q | 674,308,726,360 |
+| #touch Space | 632,238,684,290 |
+| #touch V | 694,238,746,290 |
+| #touch M | 778,150,830,202 |
+| #touch P | 778,206,830,258 |
+| #touch J | 718,150,770,202 |
+| #touch Escape (Menue) | 16,130,68,182 |
+
+Paarweise Ueberlappung der gemessenen Elemente: **keine**; keines ragt aus dem Viewport.
+Aber zusaetzlich sichtbar: Tastatur-Hinweisleiste **`#keys` 87,363,757,380** -> ueberlappt `#stick` um **69x9 px** und den E-Button um **19x5 px** (D1).
+
+Pausemenue (`openPause('optiounen')`): Overlay 0,0,844,390. Tab-Leiste `.pm-tabs` clientWidth 533 < scrollWidth 700 (overflow-x auto):
+"Optiounen" 770-895 (abgeschnitten, Screenshot zeigt "OPT"), "Spill" 899-977 komplett ausserhalb (D3). `.pm-body` scrollbar (377/254, overflow-y auto) - ok.
+Kein Touch-Schliessen-Button im Pausemenue (nur Fusszeile "ESC WEIDERSPILLEN"); auf Android uebernimmt die Zurueck-Taste das (siehe 5).
+
+## 5. native-bridge.js - PASS (mit Defekt D2)
+
+Test mit `addInitScript`-Mock (`isNativePlatform:()=>true`, App/SplashScreen/Haptics/KeepAwake, KeepAwake liefert absichtlich rejected Promise), echtes Spiel aus APK-Assets:
+
+| Schritt | Ergebnis |
+|---|---|
+| Init | Listener backButton/pause/resume registriert, `html.native-app` gesetzt, KeepAwake 1x (Reject still geschluckt), SplashScreen.hide 1x nach `#loading.gone` |
+| Back auf Titel | `confirm('Spill zoumaachen?')` -> akzeptiert -> `App.exitApp` 1x - ok |
+| Back auf Titel, Tages-Auswahl (`#tlsub`) offen | **Exit-Dialog + exitApp** statt zurueck zum Titelmenue (D2) |
+| Titel -> Optiounen, Back | Menue geschlossen, zurueck zum Titel, kein Exit - ok |
+| Im Spiel, Back | Pausemenue (Tab kaart) offen - ok |
+| Im Pausemenue, Back | Menue zu, Spiel laeuft - ok |
+| App pause | Pausemenue offen, `AudioContext.state=suspended` - ok |
+| App resume | `state=running`, Menue bleibt offen (Spieler setzt bewusst fort) - ok |
+| 2x `bump` < 120 ms | Haptics.impact genau 1x (Drosselung) - ok |
+
+Fehlende Plugins: Seite nur mit `native-bridge.js`, `Plugins={App:{addListener}}` ohne exitApp/Splash/Haptics/KeepAwake und ohne `window.G`: backButton/pause/resume -> keine Exception; mit Fake-G erneut ok.
+`Capacitor={isNativePlatform}` ganz ohne `Plugins`: keine pageerror. Gesamtlauf: 0 page errors.
 
 ## 6. CI-Workflow - PASS
 
@@ -72,6 +127,20 @@ Code-Review: alles hinter `Capacitor.isNativePlatform()`; jeder Plugin-Aufruf in
 - `git ls-files | grep -iE 'jks|keystore|p12|node_modules|/build/|apk|aab|local.properties|password|secret|.env'` -> einziger Treffer `www/vendor/three/build/three.module.js` (falsch-positiv: three.js-Ordner "build").
 - `.gitignore` deckt node_modules, Build-Ordner, `*.jks`, `*.keystore`, `*.p12`, `keystore.properties`, `upload-keystore*` ab; android/.gitignore ignoriert `*.apk`, `*.aab`, `capacitor-cordova-android-plugins`, `assets/public`.
 
+## Defekte
+
+| ID | Schwere | Beschreibung | Reproduktion |
+|---|---|---|---|
+| D1 | major (UI, Touch) | Tastatur-Hinweisleiste `#keys` ("E AKTIOUN, Q KOMPASS, ... ESC MENÜ") wird auf Mobil/Android angezeigt, ist dort sinnlos und ueberlappt den Joystick (69x9 px) und den E-Button (19x5 px). Ursache im Spiel (kein Ausblenden bei `G.isMobile`). | APK-Assets offline, 844x390, Android-UA, Spiel starten -> `qa/02-hud-touch.png` unten; `#keys` rect 87,363,757,380 vs `#stick` 26,242,156,372. Vorschlag ohne Spieleingriff: in native-bridge.js CSS `html.native-app #keys{display:none}` ergaenzen (dann www/ + Build neu). |
+| D2 | minor (UX) | Zurueck-Taste auf der Titel-Unterseite "Wéi en Dag op der Fouer?" (`#tlsub`) fragt "Spill zoumaachen?" und beendet die App statt die Unterseite zu schliessen. | Mock-Capacitor, Titel -> "Spill ufänken" -> backButton -> confirm-Dialog, exitApp-Zaehler +1. Vorschlag: in native-bridge.js im Titel-Zweig zuerst `#tlsub` mit Inhalt leeren/schliessen (Spiel-API dafuer pruefen). |
+| D3 | minor (UI) | Pausemenue-Tableiste bei 844 px zu breit: "Optiounen" abgeschnitten, "Spill" (Speichern/Neistart) unsichtbar; nur per horizontalem Wischen erreichbar, ohne Hinweis. Fusszeile zeigt Desktop-Hinweise (ESC, Pfeile, KLICK), kein Touch-Schliessen-Button. Spielseitig. | `G.ui.menu.openPause('optiounen')` -> `qa/03-pause-optiounen.png`; `.pm-tabs` clientWidth 533 / scrollWidth 700. |
+| D4 | major (Performance-Risiko, nicht auf Geraet verifiziert) | Mobil-Preset "mettel" erzeugt ~1800-1900 Draw Calls und ~2.4 M Dreiecke - fuer Mittelklasse-Android-GPUs sehr hoch (ueblich < 500 Draw Calls). Messung in SwiftShader, Wert ist aber geraeteunabhaengig. | `G.drawCalls` nach Spielstart mit Android-UA. Empfehlung: Test auf echtem Geraet (FPS), ggf. Android-Default "niddreg". |
+| D5 | minor (Text) | Cloud-Tab sagt "An dëser Artifact-Versioun ..." - in der App falsch; Cloud-Gaming nutzt `stun:stun.l.google.com` (nur opt-in). | Pause -> Optiounen -> Cloud Gaming. |
+
+Hinweise ohne Defekt: H1 allowBackup=true, H3 lokales AAB mit Wegwerf-Key, Titel-Fusszeile "KLICK WIELEN" (Desktop-Text), Tipp-Toast "Dréck [Q]" verweist auf Tastatur.
+
+Nicht geprueft: echtes Geraet/Emulator (kein Emulator im Container), System-Bars/Safe-Area mit echten Insets, WebView-Version < Chrome 131.
+
 ## Geaenderte Dateien
 
-Keine.
+Keine Dateien des Projekts geaendert. Neu angelegt nur `qa/` (dieser Bericht, 4 Screenshots, `runtime-result.json`).
