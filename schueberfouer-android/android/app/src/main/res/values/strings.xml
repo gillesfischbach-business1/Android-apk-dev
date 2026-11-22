@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Schueberfouer 2026</string>
+    <string name="title_activity_main">Schueberfouer 2026</string>
+    <string name="package_name">lu.schueberfouer.game</string>
+    <string name="custom_url_scheme">lu.schueberfouer.game</string>
+</resources>

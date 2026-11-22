@@ -1,0 +1,36 @@
+{
+  "name": "schueberfouer-android",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Android (Capacitor 8) wrapper for the Schueberfouer 2026 three.js game",
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "sync:web": "node scripts/sync-web.mjs",
+    "check:web": "node scripts/sync-web.mjs --check",
+    "cap:sync": "cap sync android",
+    "assets": "capacitor-assets generate --android --assetPath resources --iconBackgroundColor '#140a2e' --iconBackgroundColorDark '#140a2e' --splashBackgroundColor '#05030f' --splashBackgroundColorDark '#05030f'",
+    "build:debug": "cd android && ./gradlew --no-daemon assembleDebug",
+    "build:release": "cd android && ./gradlew --no-daemon bundleRelease"
+  },
+  "dependencies": {
+    "@capacitor-community/keep-awake": "8.0.1",
+    "@capacitor/android": "8.6.2",
+    "@capacitor/app": "8.1.2",
+    "@capacitor/core": "8.6.2",
+    "@capacitor/haptics": "8.0.2",
+    "@capacitor/screen-orientation": "8.0.2",
+    "@capacitor/splash-screen": "8.0.2"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "4.0.0",
+    "@capacitor/cli": "8.6.2",
+    "@fontsource/bungee": "5.3.0",
+    "@fontsource/creepster": "5.3.0",
+    "@fontsource/nunito": "5.3.0",
+    "@fontsource/oswald": "5.3.0"
+  }
+}

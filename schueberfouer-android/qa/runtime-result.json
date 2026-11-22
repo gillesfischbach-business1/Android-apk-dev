@@ -1,0 +1,402 @@
+{
+ "blocked": [],
+ "console": [
+  "A [warning] [.WebGL-0x1ee4001a9c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "A [warning] [.WebGL-0x1ee4001a9c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "A [warning] [.WebGL-0x1ee4001a9c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "A [warning] [.WebGL-0x1ee4001a9c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ],
+ "pageerr": [],
+ "failed": [],
+ "loadSec": 23.916,
+ "title": {
+  "L": [
+   {
+    "cls": "k",
+    "txt": "SCHUEBERFOUER",
+    "left": 51,
+    "right": 511,
+    "top": 35,
+    "bottom": 72,
+    "scrollW": 460,
+    "clientW": 460,
+    "font": "Bungee, sans-serif",
+    "size": "38.824px"
+   }
+  ],
+  "vw": 844,
+  "vh": 390,
+  "fontsOk": [
+   "Bungee 400",
+   "Creepster 400",
+   "Nunito 400",
+   "Oswald 400",
+   "Oswald 500",
+   "Oswald 700"
+  ],
+  "isMobile": true,
+  "quality": "mettel",
+  "preset": "mettel",
+  "renderScale": 0.85,
+  "drawCallsTitle": 1806,
+  "tris": 2416248
+ },
+ "hud": {
+  "out": [
+   {
+    "n": "#minimap",
+    "x": 710,
+    "y": 14,
+    "r": 830,
+    "b": 134,
+    "op": "1"
+   },
+   {
+    "n": "#clock",
+    "x": 16,
+    "y": 14,
+    "r": 98,
+    "b": 70,
+    "op": "1"
+   },
+   {
+    "n": "#wallet",
+    "x": 140,
+    "y": 18,
+    "r": 262,
+    "b": 75,
+    "op": "1"
+   },
+   {
+    "n": "#prompt",
+    "x": 403,
+    "y": 268,
+    "r": 441,
+    "b": 290,
+    "op": "0"
+   },
+   {
+    "n": "#touch #stick",
+    "x": 26,
+    "y": 242,
+    "r": 156,
+    "b": 372,
+    "op": "1"
+   },
+   {
+    "n": "#touch button.big[E]",
+    "x": 738,
+    "y": 290,
+    "r": 816,
+    "b": 368,
+    "op": "1"
+   },
+   {
+    "n": "#touch button.[Q]",
+    "x": 674,
+    "y": 308,
+    "r": 726,
+    "b": 360,
+    "op": "1"
+   },
+   {
+    "n": "#touch button.[Space]",
+    "x": 632,
+    "y": 238,
+    "r": 684,
+    "b": 290,
+    "op": "1"
+   },
+   {
+    "n": "#touch button.[V]",
+    "x": 694,
+    "y": 238,
+    "r": 746,
+    "b": 290,
+    "op": "1"
+   },
+   {
+    "n": "#touch button.[M]",
+    "x": 778,
+    "y": 150,
+    "r": 830,
+    "b": 202,
+    "op": "1"
+   },
+   {
+    "n": "#touch button.[P]",
+    "x": 778,
+    "y": 206,
+    "r": 830,
+    "b": 258,
+    "op": "1"
+   },
+   {
+    "n": "#touch button.[J]",
+    "x": 718,
+    "y": 150,
+    "r": 770,
+    "b": 202,
+    "op": "1"
+   },
+   {
+    "n": "#touch button.[Escape]",
+    "x": 16,
+    "y": 130,
+    "r": 68,
+    "b": 182,
+    "op": "1"
+   }
+  ],
+  "ov": [],
+  "off": [],
+  "started": true,
+  "drawCalls": 1893,
+  "tris": 2429100,
+  "touchHidden": ""
+ },
+ "pause": {
+  "menuOpen": true,
+  "overlay": [
+   0,
+   0,
+   844,
+   390
+  ],
+  "panel": [
+   0,
+   0,
+   844,
+   390
+  ],
+  "panelScrollH": 390,
+  "panelClientH": 390
+ },
+ "bridge": [
+  [
+   "init",
+   {
+    "started": false,
+    "menuOpen": false,
+    "modal": true,
+    "tab": "kaart",
+    "exit": 0,
+    "splash": 1,
+    "ka": 1,
+    "hap": 0,
+    "native": true,
+    "listeners": [
+     "backButton",
+     "pause",
+     "resume"
+    ]
+   }
+  ],
+  [
+   "back on title (confirm accepted)",
+   {
+    "started": false,
+    "menuOpen": false,
+    "modal": true,
+    "tab": "kaart",
+    "exit": 1,
+    "splash": 1,
+    "ka": 1,
+    "hap": 0,
+    "native": true,
+    "listeners": [
+     "backButton",
+     "pause",
+     "resume"
+    ]
+   }
+  ],
+  [
+   "back on title day-select subscreen",
+   {
+    "started": false,
+    "menuOpen": false,
+    "modal": true,
+    "tab": "kaart",
+    "exit": 2,
+    "splash": 1,
+    "ka": 1,
+    "hap": 0,
+    "native": true,
+    "listeners": [
+     "backButton",
+     "pause",
+     "resume"
+    ]
+   }
+  ],
+  [
+   "title -> optiounen",
+   {
+    "started": false,
+    "menuOpen": true,
+    "modal": true,
+    "tab": "optiounen",
+    "exit": 2,
+    "splash": 1,
+    "ka": 1,
+    "hap": 0,
+    "native": true,
+    "listeners": [
+     "backButton",
+     "pause",
+     "resume"
+    ]
+   }
+  ],
+  [
+   "back in title options",
+   {
+    "started": false,
+    "menuOpen": false,
+    "modal": true,
+    "tab": "optiounen",
+    "exit": 2,
+    "splash": 1,
+    "ka": 1,
+    "hap": 0,
+    "native": true,
+    "listeners": [
+     "backButton",
+     "pause",
+     "resume"
+    ]
+   }
+  ],
+  [
+   "in game",
+   {
+    "started": true,
+    "menuOpen": false,
+    "modal": false,
+    "tab": "optiounen",
+    "exit": 2,
+    "splash": 1,
+    "ka": 1,
+    "hap": 0,
+    "audio": "running",
+    "native": true,
+    "listeners": [
+     "backButton",
+     "pause",
+     "resume"
+    ]
+   }
+  ],
+  [
+   "back in game (expect pause menu)",
+   {
+    "started": true,
+    "menuOpen": true,
+    "modal": true,
+    "tab": "kaart",
+    "exit": 2,
+    "splash": 1,
+    "ka": 1,
+    "hap": 0,
+    "audio": "running",
+    "native": true,
+    "listeners": [
+     "backButton",
+     "pause",
+     "resume"
+    ]
+   }
+  ],
+  [
+   "back in menu (expect close)",
+   {
+    "started": true,
+    "menuOpen": false,
+    "modal": false,
+    "tab": "kaart",
+    "exit": 2,
+    "splash": 1,
+    "ka": 1,
+    "hap": 0,
+    "audio": "running",
+    "native": true,
+    "listeners": [
+     "backButton",
+     "pause",
+     "resume"
+    ]
+   }
+  ],
+  [
+   "app pause",
+   {
+    "started": true,
+    "menuOpen": true,
+    "modal": true,
+    "tab": "kaart",
+    "exit": 2,
+    "splash": 1,
+    "ka": 1,
+    "hap": 0,
+    "audio": "suspended",
+    "native": true,
+    "listeners": [
+     "backButton",
+     "pause",
+     "resume"
+    ]
+   }
+  ],
+  [
+   "app resume",
+   {
+    "started": true,
+    "menuOpen": true,
+    "modal": true,
+    "tab": "kaart",
+    "exit": 2,
+    "splash": 1,
+    "ka": 1,
+    "hap": 0,
+    "audio": "running",
+    "native": true,
+    "listeners": [
+     "backButton",
+     "pause",
+     "resume"
+    ]
+   }
+  ],
+  [
+   "2x bump within 120ms",
+   {
+    "started": true,
+    "menuOpen": true,
+    "modal": true,
+    "tab": "kaart",
+    "exit": 2,
+    "splash": 1,
+    "ka": 1,
+    "hap": 1,
+    "audio": "running",
+    "native": true,
+    "listeners": [
+     "backButton",
+     "pause",
+     "resume"
+    ]
+   }
+  ]
+ ],
+ "dialogs": [
+  "B confirm:Spill zoumaachen?",
+  "B confirm:Spill zoumaachen?"
+ ],
+ "bareC": [
+  "backButton:ok",
+  "pause:ok",
+  "resume:ok",
+  "withG:ok"
+ ]
+}
