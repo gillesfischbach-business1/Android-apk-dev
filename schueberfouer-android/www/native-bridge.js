@@ -46,6 +46,9 @@
       if (!u) return; // still loading: ignore
       var onTitle = !u.started && !u.menuOpen && !(u.menu && u.menu.capture);
       if (onTitle) {
+        // Unterseite (z. B. Tag-Auswahl) offen? Erst die schliessen
+        var sub = document.querySelector('#tlsub');
+        if (sub && sub.innerHTML.trim()) { if (typeof u.onKey === 'function') u.onKey(escEvent()); return; }
         if (exitAsked) return;
         exitAsked = true;
         var ok = true;
