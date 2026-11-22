@@ -141,6 +141,21 @@ Hinweise ohne Defekt: H1 allowBackup=true, H3 lokales AAB mit Wegwerf-Key, Titel
 
 Nicht geprueft: echtes Geraet/Emulator (kein Emulator im Container), System-Bars/Safe-Area mit echten Insets, WebView-Version < Chrome 131.
 
+## Nachtest nach den Fixes (22.11.2026)
+
+Offline-Bundle aus `www/` (Stand nach PR #1 plus Tipp-Texte), 844x390, Android-UA, Touch, Capacitor-Mock. Skript: lokaler Server + Playwright, keine externen Requests, keine Seitenfehler.
+
+| ID | Ergebnis | Messung |
+|---|---|---|
+| D1 | BEHOBEN | `#keys` vorhanden, `display: none` bei `G.isMobile` -> `qa/05-retest-hud.png` |
+| D2 | BEHOBEN | Titel -> Tagesauswahl offen (465 Zeichen), Back -> `#tlsub` leer, `exitApp` 0x aufgerufen |
+| D3 | BEHOBEN | Schliessen-Knopf `#pmclose` sichtbar und funktioniert, Tabs horizontal scrollbar, alle 6 Reiter vorhanden -> `qa/06-retest-pause.png` |
+| D4 | VERBESSERT | Mobil-Standard: 1248 Draw Calls (vorher ~1850), 1,69 M Dreiecke (vorher 2,4 M), Schatten aus, 280 Besucher. Echte FPS nur auf Geraet messbar |
+| D5 | BEHOBEN | Cloud-Seite: "An der Android-App funktionéiert Cloud Gaming, soubal en WHEP-Server ugi gëtt ..." -> `qa/07-retest-cloud.png` |
+| H (Tipp-Toast) | BEHOBEN | Auf Touch-Geraeten werden Tasten-Hinweise ersetzt: "Dréck [🧭] ... [☰] fir Kaart" statt "[Q]"/"[Esc]"; gilt auch fuer Missionstexte und Fahrgeschaeft-Hinweise |
+
+Debug-APK lokal neu gebaut (`assembleDebug`, 17,6 MB). Weiter offen: Test auf echtem Geraet/Emulator (Container hat kein KVM).
+
 ## Geaenderte Dateien
 
 Keine Dateien des Projekts geaendert. Neu angelegt nur `qa/` (dieser Bericht, 4 Screenshots, `runtime-result.json`).
