@@ -1,0 +1,21 @@
+# Dependencies / build output
+node_modules/
+android/app/build/
+android/build/
+android/.gradle/
+.gradle/
+android/local.properties
+android/capacitor-cordova-android-plugins/build/
+*.log
+
+# Signing material: NEVER commit
+*.jks
+*.keystore
+*.p12
+keystore.properties
+upload-keystore*
+
+# Editors
+.idea/
+.vscode/
+.DS_Store
