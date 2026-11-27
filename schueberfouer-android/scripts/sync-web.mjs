@@ -180,7 +180,7 @@ function rewriteIndex() {
 if (CHECK_ONLY) { verify(); process.exit(0); }
 
 if (!fs.existsSync(path.join(GAME, 'index.html'))) die(`game folder not found: ${GAME} (use --game <dir> or GAME_DIR)`);
-const THREE = path.resolve(opt('--three') || [path.join(GAME, 'node_modules/three'), path.join(NM, 'three')].find((d) => fs.existsSync(path.join(d, 'build/three.module.js'))) || '');
+const THREE = path.resolve(opt('--three') || [path.join(NM, 'three'), path.join(GAME, 'node_modules/three')].find((d) => fs.existsSync(path.join(d, 'build/three.module.js'))) || '');
 if (!fs.existsSync(path.join(THREE, 'build/three.module.js'))) die('three not found (expected <game>/node_modules/three)');
 const threeVer = JSON.parse(fs.readFileSync(path.join(THREE, 'package.json'), 'utf8')).version;
 log(`game: ${GAME}`);
