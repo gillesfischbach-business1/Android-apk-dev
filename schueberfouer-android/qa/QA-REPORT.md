@@ -156,6 +156,17 @@ Offline-Bundle aus `www/` (Stand nach PR #1 plus Tipp-Texte), 844x390, Android-U
 
 Debug-APK lokal neu gebaut (`assembleDebug`, 17,6 MB). Weiter offen: Test auf echtem Geraet/Emulator (Container hat kein KVM).
 
+## Stand v0.6 (27.11.2026)
+
+Spielpaket neu synchronisiert: Grafikstile (Standard „Realistesch"), detaillierte Buden und Fahrgeschaefte, Figurentypen mit
+Gehbewegung, Gelaender-Kollision, Asphalt-Korrektur. three.js im Paket jetzt r187 (vorher r170), aus den devDependencies der App.
+
+Offline-Start aus `www/`, 844x390, Android-UA, Touch: Spiel startet, 22 Fahrgeschaefte, three r187, Preset „mettel", keine
+Seitenfehler, keine externen Requests, Tastaturleiste ausgeblendet. Gemessen: 1.247 Draw Calls (vorher 1.248), 2,05 M Dreiecke
+(vorher 1,69 M). Screenshot `qa/08-v06-mobile.png`. Debug-APK lokal gebaut (24,2 MB), `apksigner verify` ohne Fehler.
+
+Nicht geprueft: echtes Geraet/Emulator, Bildrate, Klang in diesem Lauf (zuletzt in v0.5 geprueft).
+
 ## Geaenderte Dateien
 
 Keine Dateien des Projekts geaendert. Neu angelegt nur `qa/` (dieser Bericht, 4 Screenshots, `runtime-result.json`).
